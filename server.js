@@ -138,8 +138,8 @@ app.use((req, res, next) => {
   }
   const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
     protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
-    const infoToStore = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.secure, logdata.status, logdata.referer, logdata.useragent)
-    res.status(200).json(logdata).next();
+    stmt.run(Object.values(logdata));
+    next();
 })
 //check if debug is true
 if (args.debug == 'true') {
