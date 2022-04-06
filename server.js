@@ -8,7 +8,7 @@ app.use(express.urlencoded({extended: true}))
 // Require Express.js
 const args = require('minimist')(process.argv.slice(2))
 
-const port = args.port || process.env.PORT || 5000;
+const port = args.port || process.env.PORT || 5555;
 //set debug to command line or false
 const debug = args.debug || false
 //set log to command line or false
@@ -30,7 +30,7 @@ if (log) {
 };
 //check port
 if (port > 65535 || port < 1) {
-  port = 5000;
+  port = 5555;
 }
 
 
