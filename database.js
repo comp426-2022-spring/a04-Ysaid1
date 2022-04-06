@@ -22,9 +22,8 @@ if (row == undefined){
             useragent TEXT );
     `
     db.exec(sq1Init);
-    console.log('Log Databse exists')
 } else {
-    console.log('Databse exists already')
+    console.log('Log Databse exists')
 }
 
 module.exports = db;
