@@ -8,6 +8,7 @@ if (row == undefined){
     console.log('Log database appears to be empty. Create log database...')
     const sq1Init = `
         CREATE TABLE access ( 
+            id INTEGER PRIMARY KEY,
             remoteaddr TEXT,
             remoteuser TEXT,
             time TEXT,
@@ -18,11 +19,12 @@ if (row == undefined){
             secure TEXT,
             status TEXT,
             referer TEXT,
-            useragent TEXT )
-    `;
+            useragent TEXT );
+    `
     db.exec(sq1Init);
-} else {
     console.log('Log Databse exists')
+} else {
+    console.log('Databse exists already')
 }
 
 module.exports = db;

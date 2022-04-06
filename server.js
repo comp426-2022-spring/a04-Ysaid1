@@ -140,7 +140,7 @@ app.use((req, res, next) => {
     protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
     stmt.run(Object.values(logdata));
     next();
-})
+});
 //check if debug is true
 if (args.debug) {
   app.get('/app/log/access', (req, res) => {
