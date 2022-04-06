@@ -80,7 +80,6 @@ if (args.debug == 'true') {
         console.error(e)
       }
 });
-
 //endpoint for just 1 flip
 app.get('/app/flip/', (req, res) => {
   //call coin flip function
