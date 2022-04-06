@@ -1,5 +1,4 @@
 /** Simple coin flip
- * 
  * @param {*}
  * @returns {string} 
  */
@@ -125,17 +124,18 @@ app.get('/app/', (req, res) => {
 
 app.use((req, res, next) => {
   let logdata = {
-      remoteaddr: req.ip,
-      remoteuser: req.user,
-      time: Date.now(),
-      method: req.method,
-      url: req.url,
-      protocol: req.protocol,
-      httpversion: req.httpVersion,
-      status: res.statusCode,
-      referer: req.headers['referer'],
-      useragent: req.headers['user-agent']
-  };
+    remoteaddr: req.ip,
+    remoteuser: req.user,
+    time: Date.now(),
+    method: req.method,
+    url: req.url,
+    protocol: req.protocol,
+    httpversion: req.httpVersion,
+    secure: req.secure,
+    status: res.statusCode,
+    referer: req.headers['referer'],
+    useragent: req.headers['user-agent']
+  }
   const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
     protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
     stmt.run(Object.values(logdata));
