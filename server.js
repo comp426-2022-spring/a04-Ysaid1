@@ -102,7 +102,7 @@ if(help){
   process.exit(0)
 }
 //if log is true then write to the file
-if (log) {
+if (args.log) {
   const accessLog = fs.createWriteStream('access.log', { flags: 'a' });
   app.use(morgan('combined', { stream: accessLog }));
 };
@@ -142,7 +142,7 @@ app.use((req, res, next) => {
     next();
 })
 //check if debug is true
-if (args.debug == true) {
+if (args.debug) {
   app.get('/app/log/access', (req, res) => {
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
@@ -150,7 +150,12 @@ if (args.debug == true) {
       } catch(e) {
         console.error(e)
       }
-})}
+});   
+//end point for error testing
+app.get('/app/error', (req, res) => {
+    throw new Error('Error test worked.')
+});
+};
 
  //endpoint for just 1 flips
  app.get('/app/flip/', (req, res) => {
