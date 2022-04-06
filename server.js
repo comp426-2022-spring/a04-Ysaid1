@@ -142,7 +142,7 @@ app.use((req, res, next) => {
     next();
 })
 //check if debug is true
-if (args.debug == 'true') {
+if (args.debug == true) {
   app.get('/app/log/access', (req, res) => {
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
@@ -151,7 +151,8 @@ if (args.debug == 'true') {
         console.error(e)
       }
 })}
- //endpoint for just 1 flip
+
+ //endpoint for just 1 flips
  app.get('/app/flip/', (req, res) => {
     //call coin flip function
     var flip = coinFlip();
