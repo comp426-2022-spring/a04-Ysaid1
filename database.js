@@ -1,7 +1,4 @@
 const database = require('better-sqlite3');
-const e = require('express');
-const { application } = require('express');
-const { restart } = require('nodemon');
 
 const db = new database('log.db')
 

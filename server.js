@@ -1,3 +1,73 @@
+/** Simple coin flip
+ * @param {*}
+ * @returns {string} 
+ */
+ function coinFlip() {
+    return Math.random() > 0.5 ? ("heads") : ("tails")
+  }
+  
+  function coinFlips(flips) {
+    var arrayOfFlips = [flips]
+    //loop through each flip to determine if it is heads or not
+    for (var i = 0; i < flips; i++){
+      arrayOfFlips[i] = coinFlip();
+      //get the number of heads and tails
+    }
+    return arrayOfFlips;
+  }
+  function countFlips(array) {
+    //create a new object to hold number of heads and tails
+    //set heads and tails to 0
+    var countOfHeadsAndTails = {heads: 0, tails: 0}
+    //loop through
+    for (let i = 0; i < array.length; i++){
+      //increment number of heads if it is heads
+      if (array[i] == 'heads'){
+        //increment number of heads
+        countOfHeadsAndTails.heads = countOfHeadsAndTails.heads + 1;
+      }
+      else {
+        //increment number of tails in the object
+        countOfHeadsAndTails.tails = countOfHeadsAndTails.tails + 1;
+      }
+    }
+    //remove  tails if it doesn't exist
+    if (countOfHeadsAndTails.heads == 1){
+      delete countOfHeadsAndTails.tails;
+    }
+    else if (countOfHeadsAndTails.tails == 1){
+      delete countOfHeadsAndTails.heads;
+    }
+    //return the object
+    return countOfHeadsAndTails;
+  }
+  
+  function flipACoin(call) {
+    //Flip a coin to get heads or tails
+    var flippingACoin = coinFlip()
+    //initailze the result of the flip
+    var resultOfFlip =''
+    //check to see if the coin flip was correct
+    if (flippingACoin == call){
+      //if the coin flip matches the call change result to win
+      resultOfFlip = resultOfFlip + 'win';
+    }
+    else {
+      //if coin call does not match the flip, change the result to lose
+      resultOfFlip = resultOfFlip + 'lose'
+    }
+    //create an object to hold the variables
+    var checkResult  = {call:call, flip:'', result : ''};
+    //add the flip result to flip
+    checkResult.flip = flippingACoin;
+    //add the result of the flip to the result object variable
+    checkResult.result = resultOfFlip;
+    if(call == null || call == ""){
+      throw 'No input';
+    }
+    //return it
+    return checkResult;
+  }
 const express = require('express')
 const app = express()
 const morgan = require('morgan');
@@ -7,7 +77,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 const db = require('./database.js')
 // Require Express.js
-const args = minimist(process.argv.slice(2));
+const args = require('minimist')(process.argv.slice(2))
 const port = args.port || process.env.PORT || 5555;
 args['port'];
 args['help']
@@ -79,104 +149,4 @@ if (args.debug == 'true') {
       } catch(e) {
         console.error(e)
       }
-});
-//endpoint for just 1 flip
-app.get('/app/flip/', (req, res) => {
-  //call coin flip function
-  var flip = coinFlip();
-  // Respond with status 200
-  res.status(200).json({ "flip" : flip });
-});
-//endpoint for coin flips given a number
-app.get('/app/flips/:number', (req, res) => {
-  var flips = coinFlips(req.params.number)
-  res.status(200).json({"raw" : flips, "summary" : countFlips(flips)})
-});
-
-//endpoint for calling a flip
-app.get('/app/flip/call/:guess(heads|tails)', (req, res) => {
-  //call the function flip a coin and take in paramater call
-  var callOfFlips = flipACoin(req.params.guess);
-  // Respond with status 200
-  res.status(200).json(callOfFlips);;
-});
-
-//Error handling if Endpoint does not exist
-app.use(function(req, res){
-  res.status(404)
-  res.json({"message":"Endpoint not found (404)"})
-})
-
-
-
-/** Simple coin flip
- * @param {*}
- * @returns {string} 
- */
-function coinFlip() {
-  return Math.random() > 0.5 ? ("heads") : ("tails")
-}
-
-function coinFlips(flips) {
-  var arrayOfFlips = [flips]
-  //loop through each flip to determine if it is heads or not
-  for (var i = 0; i < flips; i++){
-    arrayOfFlips[i] = coinFlip();
-    //get the number of heads and tails
-  }
-  return arrayOfFlips;
-}
-function countFlips(array) {
-  //create a new object to hold number of heads and tails
-  //set heads and tails to 0
-  var countOfHeadsAndTails = {heads: 0, tails: 0}
-  //loop through
-  for (let i = 0; i < array.length; i++){
-    //increment number of heads if it is heads
-    if (array[i] == 'heads'){
-      //increment number of heads
-      countOfHeadsAndTails.heads = countOfHeadsAndTails.heads + 1;
-    }
-    else {
-      //increment number of tails in the object
-      countOfHeadsAndTails.tails = countOfHeadsAndTails.tails + 1;
-    }
-  }
-  //remove  tails if it doesn't exist
-  if (countOfHeadsAndTails.heads == 1){
-    delete countOfHeadsAndTails.tails;
-  }
-  else if (countOfHeadsAndTails.tails == 1){
-    delete countOfHeadsAndTails.heads;
-  }
-  //return the object
-  return countOfHeadsAndTails;
-}
-
-function flipACoin(call) {
-  //Flip a coin to get heads or tails
-  var flippingACoin = coinFlip()
-  //initailze the result of the flip
-  var resultOfFlip =''
-  //check to see if the coin flip was correct
-  if (flippingACoin == call){
-    //if the coin flip matches the call change result to win
-    resultOfFlip = resultOfFlip + 'win';
-  }
-  else {
-    //if coin call does not match the flip, change the result to lose
-    resultOfFlip = resultOfFlip + 'lose'
-  }
-  //create an object to hold the variables
-  var checkResult  = {call:call, flip:'', result : ''};
-  //add the flip result to flip
-  checkResult.flip = flippingACoin;
-  //add the result of the flip to the result object variable
-  checkResult.result = resultOfFlip;
-  if(call == null || call == ""){
-    throw 'No input';
-  }
-  //return it
-  return checkResult;
-}
-}
+})}

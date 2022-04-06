@@ -1,10 +1,27 @@
 {
+  "name": "a04-ysaid1",
+  "version": "1.0.0",
+  "description": "Lab 4",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/comp426-2022-spring/a04-Ysaid1.git"
+  },
+  "author": "Yehia Said",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/comp426-2022-spring/a04-Ysaid1/issues"
+  },
+  "homepage": "https://github.com/comp426-2022-spring/a04-Ysaid1#readme",
   "dependencies": {
     "better-sqlite3": "^7.5.0",
-    "db": "^3.3.1",
     "express": "^4.17.3",
     "fs": "^0.0.1-security",
-    "minimist": "^1.2.6",
+    "minimist": "^1.2.5",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15"
   }
