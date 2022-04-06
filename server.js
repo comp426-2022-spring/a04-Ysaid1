@@ -1,13 +1,10 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan');
-const database = require('better-sqlite3')
 const fs = require('fs')
-const logdb = new database('log.db')
 //allow reading of json
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-const db = require('./database.js')
 // Require Express.js
 const args = require('minimist')(process.argv.slice(2))
 
@@ -19,7 +16,7 @@ const log = args.log || true
 const help = args.help
 
 //If the command line is help, offer these solutions
-if(help){
+if(help != null){
   console.log('--port     Set the port number for the server to listen on. Must be an integer between 1 and 65535.\n')
   console.log('--debug    If set to `true`, creates endlpoints /app/log/access/ which returns a JSON access log from the database and /app/error which throws an error with the message "Error test successful." Defaults to `false`.\n')
   console.log('--log      If set to false, no log files are written. Defaults to true. Logs are always written to database.\n')
@@ -35,7 +32,35 @@ if (log) {
 if (port > 65535 || port < 1) {
   port = 5000;
 }
+const database = require('better-sqlite3');
 
+const db = new database('log.db')
+
+const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' and name='accesslog';`)
+let row = stmt.get();
+if (row == undefined){
+    console.log('Log database appears to be empty. Create log database...')
+    const sq1Init = `
+        CREATE TABLE access ( 
+            id INTEGER PRIMARY KEY,
+            remoteaddr TEXT,
+            remoteuser TEXT,
+            time TEXT,
+            method TEXT,
+            url TEXT,
+            protocol TEXT,
+            httpversion TEXT,
+            secure TEXT,
+            status TEXT,
+            referer TEXT,
+            useragent TEXT );
+    `
+    db.exec(sq1Init);
+} else {
+    console.log('Log Databse exists')
+}
+
+module.exports = db;
 
 app.use((req, res, next) => {
   let logdata = {
