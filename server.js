@@ -84,8 +84,9 @@ args['help']
 args['debug']
 args['log']
 const help = args.help
-const debug = args.debug
-const log = args.log
+//set to false at first
+const debug = (args.debug == 'false' || args.debug == "false" || args.debug == undefined) ? false : true;
+const log = (args.log == 'false' || args.log == "false" || args.log == undefined) ? false : true;
 //If the command line is help, offer these solutions
 if(help){
   console.log(`  
@@ -138,7 +139,7 @@ app.use((req, res, next) => {
   const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
     protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
     const infoToStore = stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method, logdata.url, logdata.protocol, logdata.httpversion, logdata.secure, logdata.status, logdata.referer, logdata.useragent)
-    res.status(200).json(infoToStore).next();
+    res.status(200).json(logdata).next();
 })
 //check if debug is true
 if (args.debug == 'true') {
