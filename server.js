@@ -1,5 +1,3 @@
-import {db} from './database.js';
-
 /** Simple coin flip
  * 
  * @param {*}
