@@ -73,6 +73,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan');
 const fs = require('fs')
+const db = require('./database.js')
 //allow reading of json
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -80,14 +81,13 @@ app.use(express.urlencoded({extended: true}))
 const args = require('minimist')(process.argv.slice(2))
 
 const port = args.port || process.env.PORT || 5555;
-//set debug to command line or false
-const debug = args.debug || false
-//set log to command line or false
-const log = args.log || true
+//set the command line arguements
 const help = args.help
+const debug = args.debug
+const log = args.log
 
 //If the command line is help, offer these solutions
-if(help != null){
+if(help == true){
   console.log('--port     Set the port number for the server to listen on. Must be an integer between 1 and 65535.\n')
   console.log('--debug    If set to `true`, creates endlpoints /app/log/access/ which returns a JSON access log from the database and /app/error which throws an error with the message "Error test successful." Defaults to `false`.\n')
   console.log('--log      If set to false, no log files are written. Defaults to true. Logs are always written to database.\n')
@@ -101,10 +101,7 @@ if(log === true) {
   // Set up the middleware
   app.use(morgan('combined', { stream: accessLog }))
 }
-//check port
-if (port > 65535 || port < 1) {
-  port = 5000;
-}
+
 const server = app.listen(port, () => {
   console.log(`App listening on port ${port}`)
 });
@@ -116,35 +113,42 @@ app.get('/app', (req, res)  => {
   res.end(res.statusCode + ' ' + res.statusMessage)
 })
 
-const database = require('better-sqlite3');
+app.use((req, res, next) => {
+  let logdata = {
+    remoteaddr: req.ip,
+    remoteuser: req.user,
+    time: Date.now(),
+    method: req.method,
+    url: req.url,
+    protocol: req.protocol,
+    httpversion: req.httpVersion,
+    secure: req.secure,
+    status: res.statusCode,
+    referer: req.headers['referer'],
+    useragent: req.headers['user-agent']
+  }
+  const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
+    protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+    stmt.run(Object.values(logdata));
+    next();
+});
 
-const db = new database('log.db')
-
-const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' and name='accesslog';`)
-let row = stmt.get();
-if (row == undefined){
-    console.log('Log database appears to be empty. Create log database...')
-    const sq1Init = ` CREATE TABLE accesslog ( 
-        id INTEGER PRIMARY KEY,
-        remoteaddr VARCHAR,
-        remoteuser VARCHAR,
-        time VARCHAR,
-        method VARCHAR,
-        url VARCHAR,
-        protocol VARCHAR,
-        httpversion NUMERIC,
-        secure VARCHAR,
-        status INTEGER,
-        referer VARCHAR,
-        useragent VARCHAR 
-        );`
-    db.exec(sq1Init);
-} else {
-    console.log('Log Databse exists')
-}
-
-module.exports = db;
-
+ //check if debug is true
+ if (debug ==  true) {
+  app.get('/app/log/access', (req, res) => {
+    try {
+      const stmt = db.prepare('SELECT * FROM accesslog').all()
+      res.status(200).json(stmt)
+      } catch(e) {
+        console.error(e)
+      }
+});   
+//end point for error testing
+app.get('/app/error', (req, res) => {
+  res.status(500)
+  throw new Error('Error test worked.')
+});
+};
 
  //endpoint for just 1 flips
  app.get('/app/flip/', (req, res) => {
@@ -166,43 +170,6 @@ app.get('/app/flip/call/:guess(heads|tails)', (req, res) => {
     // Respond with status 200
     res.status(200).json(callOfFlips);;
  });
-
- //check if debug is true
-if (debug ==  true) {
-  app.get('/app/log/access', (req, res) => {
-    try {
-      const stmt = db.prepare('SELECT * FROM accesslog').all()
-      res.status(200).json(stmt)
-      } catch(e) {
-        console.error(e)
-      }
-});   
-//end point for error testing
-app.get('/app/error', (req, res) => {
-  res.status(500)
-  throw new Error('Error test worked.')
-});
-};
-
-app.use((req, res, next) => {
-  let logdata = {
-    remoteaddr: req.ip,
-    remoteuser: req.user,
-    time: Date.now(),
-    method: req.method,
-    url: req.url,
-    protocol: req.protocol,
-    httpversion: req.httpVersion,
-    secure: req.secure,
-    status: res.statusCode,
-    referer: req.headers['referer'],
-    useragent: req.headers['user-agent']
-  }
-  const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
-    protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
-    stmt.run(Object.values(logdata));
-    next();
-});
 
 //Error handling if Endpoint does not exist
 app.use(function(req, res){
