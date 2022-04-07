@@ -26,6 +26,7 @@ if(help != null){
 //if log is true then write to the file
   const accesslog = fs.createWriteStream('access.log', {flags: 'a'})
   app.use(morgan('FORMAT', {stream: accesslog}))
+
 //check port
 if (port > 65535 || port < 1) {
   port = 5000;
