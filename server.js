@@ -160,7 +160,7 @@ app.get('/app/flip/call/:guess(heads|tails)', (req, res) => {
  });
 
  //check if debug is true
-if (debug) {
+if (debug ==  true) {
   app.get('/app/log/access', (req, res) => {
     try {
       const stmt = db.prepare('SELECT * FROM accesslog').all()
