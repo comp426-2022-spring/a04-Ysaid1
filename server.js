@@ -79,7 +79,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 // Require Express.js
 const args = require('minimist')(process.argv.slice(2))
-
+args['port', 'debug', 'log', 'help']
 const port = args.port || process.env.PORT || 5555;
 //set the command line arguements
 const help = args.help
@@ -127,9 +127,8 @@ app.use((req, res, next) => {
     referer: req.headers['referer'],
     useragent: req.headers['user-agent']
   }
-  const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, 
-    protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
-    stmt.run(Object.values(logdata));
+  const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+  stmt.run(Object.values(logdata))
     next();
 });
 
