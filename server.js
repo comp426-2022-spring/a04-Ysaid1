@@ -105,6 +105,17 @@ if(log === true) {
 if (port > 65535 || port < 1) {
   port = 5000;
 }
+const server = app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+});
+
+app.get('/app', (req, res)  => {
+  res.statusCode = 200
+  res.statusMessage = 'OK'
+  res.writeHead( res.statusCode, {'Content-Type' : 'text/plain'})
+  res.end(res.statusCode + ' ' + res.statusMessage)
+})
+
 const database = require('better-sqlite3');
 
 const db = new database('log.db')
@@ -134,9 +145,6 @@ if (row == undefined){
 
 module.exports = db;
 
-const server = app.listen(port, () => {
-  console.log(`App listening on port ${port}`)
-});
 
  //endpoint for just 1 flips
  app.get('/app/flip/', (req, res) => {
