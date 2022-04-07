@@ -179,10 +179,10 @@ if (debug ==  true) {
 });   
 //end point for error testing
 app.get('/app/error', (req, res) => {
-    throw new Error('Error test worked.')
+  res.status(500)
+  throw new Error('Error test worked.')
 });
 };
-
 
 app.use((req, res, next) => {
   let logdata = {
