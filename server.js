@@ -128,8 +128,8 @@ app.use((req, res, next) => {
     useragent: req.headers['user-agent']
   }
   const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, secure, status, referer, useragent) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
-  stmt.run(logdata.remoteaddr, logdata.remoteuser, logdata.time, logdata.method,logdata.url, logdata.protocol, logdata.httpversion, logdata.secure, logdata.status,logdata.referer, logdata.useragent)
-    next();
+  const info = stmt.run(String(logdata.remoteaddr), String(logdata.remoteuser), String(logdata.time),String(logdata.method), String(logdata.url), String(logdata.protocol), String(logdata.httpversion), String(logdata.secure), String(logdata.status), String(logdata.referer), String(logdata.useragent))
+  next()
 });
 
  //check if debug is true
