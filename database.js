@@ -1,0 +1,28 @@
+const database = require('better-sqlite3');
+
+const db = new database('log.db')
+
+const stmt = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' and name='accesslog';`)
+let row = stmt.get();
+if (row == undefined){
+    console.log('Log database appears to be empty. Create log database...')
+    const sq1Init = ` CREATE TABLE accesslog ( 
+        id INTEGER PRIMARY KEY,
+        remoteaddr VARCHAR,
+        remoteuser VARCHAR,
+        time VARCHAR,
+        method VARCHAR,
+        url VARCHAR,
+        protocol VARCHAR,
+        httpversion NUMERIC,
+        secure VARCHAR,
+        status INTEGER,
+        referer VARCHAR,
+        useragent VARCHAR 
+        );`
+    db.exec(sq1Init);
+} else {
+    console.log('Log Databse exists')
+}
+
+module.exports = db;
